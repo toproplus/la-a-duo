@@ -7,7 +7,7 @@
 Run :
 
 ```
-$ composer require toproplus/la-a-duo
+$ composer require toproplus/la-a-duo  
 ```
 
 Then run:
