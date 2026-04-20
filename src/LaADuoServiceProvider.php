@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class LaADuoServiceProvider extends ServiceProvider
 {
@@ -61,6 +62,8 @@ class LaADuoServiceProvider extends ServiceProvider
             return;
         }
 
+        $this->ensureHttps();
+
         if ($views = $extension->views()) {
             $this->loadViewsFrom($views, 'la-a-duo');
         }
@@ -92,6 +95,20 @@ class LaADuoServiceProvider extends ServiceProvider
                     }
                 }
             });
+        }
+    }
+
+    /**
+     * Force to set https scheme if https enabled.
+     *
+     * @return void
+     */
+    protected function ensureHttps()
+    {
+        $is_admin = Str::startsWith(request()->getRequestUri(), '/'.ltrim(config('agent.route.prefix'), '/'));
+        if ((config('agent.https') || config('agent.secure')) && $is_admin) {
+            url()->forceScheme('https');
+            $this->app['request']->server->set('HTTPS', true);
         }
     }
 
